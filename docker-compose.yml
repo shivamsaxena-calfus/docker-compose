@@ -8,29 +8,11 @@ services:
     build: ../portal-ui-service
     environment:
       - AUTH_SERVICE_URL=http://auth-service:3000
-      # - CUSTOMER_SERVICE_URL=http://customer-api-service:3000
-      # - PRODUCT_SERVICE_URL=http://product-api-service:3000
       - NEXT_PUBLIC_KEYCLOAK_BASE_URL=http://localhost:8080/realms/south-wire
       - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=south-wire-client
       - NEXT_PUBLIC_UI_BASE_URL=http://localhost/callback
     ports:
       - 80:80
-
-  auth-service:
-    container_name: auth-service
-    image: auth-service:1.0.0
-    build: ../auth-service
-    environment:
-      - KEYCLOAK_BASE_URL=http://keycloak:8080
-      - KEYCLOAK_CLIENT_ID=admin-cli
-      - KEYCLOAK_CLIENT_SECRET=huj4HGoM2vJRkqU3nmH3yyscgMv9qVLF
-      - KEYCLOAK_REALM=south-wire
-      - SWAGGER_BASEURL=http://localhost
-      - SWAGGER_SERVER_NAME=Docker Compose Environment
-      - CUSTOMER_API_SERVICE_BASE_URL=http://customer-api-service:3000
-
-    ports:
-      - 3001:3001
 
   authentication-service:
     container_name: authentication-service
@@ -43,26 +25,28 @@ services:
       - KEYCLOAK_REALM=south-wire
       - SWAGGER_BASEURL=http://localhost
       - SWAGGER_SERVER_NAME=Docker Compose Environment
-      - CUSTOMER_API_SERVICE_BASE_URL=http://customer-api-service:3000
 
     ports:
       - 3000:3000
+
+  document_processor:
+    container_name: document_processor
+    image: document_processor:1.0.0
+    build: ../document_processor
+    environment:
+      - GOOGLE_API_KEY=AIzaSyCYDWI5vwhCPjqyzyLq135hElz2gnwABQU 
+      - SWAGGER_BASEURL=http://localhost
+      - SWAGGER_SERVER_NAME=Docker Compose Environment
+
+    ports:
+      - 5001:5001
+
 
   keycloak:
     container_name: keycloak
     image: keycloak-service:1.0.0
     build: ../keycloak-service
     environment:
-      # - KEYCLOAK_ENABLE_HEALTH_ENDPOINTS=true
-      # - KEYCLOAK_ENABLE_STATISTICS=true
-      # - KEYCLOAK_DATABASE_NAME=postgres
-      # - KEYCLOAK_DATABASE_USER=postgres
-      # - KEYCLOAK_DATABASE_PASSWORD=postgres
-      # - KEYCLOAK_HOSTNAME=localhost
-      # - KEYCLOAK_ADMIN=admin
-      # - KEYCLOAK_ADMIN_PASSWORD=admin
-      # - KEYCLOAK_DATABASE_HOST=keycloakdb
-      # - KEYCLOAK_DATABASE_PORT=5432
       - KC_HEALTH_ENABLED=true
       - KC_METRICS_ENABLED=true
       - KC_DB=postgres
